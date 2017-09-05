@@ -21,7 +21,7 @@ namespace ApiMgmSynchronizer.Service.Clients
             return httpClient;
         }
 
-        private Task<string> GenerateSharedSignature(string id, string key, DateTime expiry)
+        protected Task<string> GenerateSharedSignature(string id, string key, DateTime expiry)
         {
             using (var encoder = new HMACSHA512(Encoding.UTF8.GetBytes(key)))   
             {   

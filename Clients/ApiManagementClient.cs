@@ -17,9 +17,9 @@ namespace ApiMgmSynchronizer.Service.Clients
     {
         private IHttpClientFactory _httpClientFactory;
 
-        public ApiManagementClient()
+        public ApiManagementClient(IHttpClientFactory httpClientFactory)
         {
-            this._httpClientFactory = new HttpClientFactory();
+            this._httpClientFactory = httpClientFactory;
         }
 
         public async Task<AsociatedApi> GetAsociatedApi(ApiMetadataDTO metadata)

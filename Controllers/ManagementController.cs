@@ -5,6 +5,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using ApiMgmSynchronizer.Service.Clients;
 using ApiMgmSynchronizer.Service.Dto;
+using ApiMgmSynchronizer.Service.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -13,6 +14,13 @@ namespace ApiMgmSynchronizer.Service.Controllers
     [Route("api/[controller]")]
     public class ManagementController : Controller
     {
+        private IApiManagementClient _apiManagementClient;
+
+        public ManagementController(IApiManagementClient apiManagementClient)
+        {
+            this._apiManagementClient = apiManagementClient;
+        }
+
         [HttpPost]
         public void Post([FromBody]ApiMetadataDTO apiMetadata)
         {            
@@ -26,12 +34,9 @@ namespace ApiMgmSynchronizer.Service.Controllers
                 Console.WriteLine(string.Format("Swagger Url: {0}", apiMetadata.SwaggerUrl));
                 Console.WriteLine(string.Format("Tenant Name: {0}", apiMetadata.TenantName));            
 
-                // Apis
-                var apiManagementImportClient = new ApiManagementClient();
-
                 // Actions
                 Console.Write("Getting Existing Apis...");
-                var apiInfo = apiManagementImportClient.GetAsociatedApi(apiMetadata).Result;            
+                var apiInfo = this._apiManagementClient.GetAsociatedApi(apiMetadata).Result;            
 
                 if(apiInfo.ApiExists())
                 {
@@ -45,14 +50,14 @@ namespace ApiMgmSynchronizer.Service.Controllers
                     Console.ResetColor();
                     
                     Console.Write("Deploying API: {0} to Management API...", apiInfo.ApiAid);
-                    apiManagementImportClient.UpgradeSwaggerApi(apiInfo.ApiAid, apiMetadata).Wait();
+                    this._apiManagementClient.UpgradeSwaggerApi(apiInfo.ApiAid, apiMetadata).Wait();
                     Console.ForegroundColor = ConsoleColor.Green;                
                     Console.WriteLine("Sync");   
                     Console.ResetColor();
 
                     // Checking Policies
                     Console.Write("Getting API Policies...");
-                    var policy = apiManagementImportClient.GetPolicy(apiInfo.ApiAid, apiMetadata).Result;
+                    var policy = this._apiManagementClient.GetPolicy(apiInfo.ApiAid, apiMetadata).Result;
 
                     Console.ForegroundColor = ConsoleColor.Green;  
                     Console.Write("OK");
