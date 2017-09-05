@@ -1,0 +1,10 @@
+version: '2'
+
+services:
+  ci-build:
+    image: microsoft/aspnetcore-build:1.0-1.1
+    container_name: build
+    volumes:
+      - ..:/app
+    working_dir: /app
+    command: /bin/bash -c "dotnet restore ./ApiMgmSynchronizer.Service.sln && dotnet publish ./ApiMgmSynchronizer.Service.sln -c Release -o ./build

@@ -1,0 +1,12 @@
+version: '2'
+
+services:
+  commercialauto.api:
+    image: apimgmsynchronizer.service
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        source: ./build
+    ports:
+      - "6000:6000"
